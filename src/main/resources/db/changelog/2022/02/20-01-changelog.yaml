@@ -1,0 +1,130 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1645351200156-1
+      author: soroosh (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_transactions
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: event
+                  type: INT
+              - column:
+                  name: amount
+                  type: BIGINT
+              - column:
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  name: wallet_id
+                  type: BIGINT
+              - column:
+                  name: transaction_id
+                  type: VARCHAR(255)
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: meta
+                  type: VARCHAR(255)
+            tableName: transactions
+  - changeSet:
+      id: 1645351200156-2
+      author: soroosh (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_users
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: username
+                  type: VARCHAR(255)
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+            tableName: users
+  - changeSet:
+      id: 1645351200156-3
+      author: soroosh (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_wallets
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: currency
+                  type: INT
+              - column:
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  name: cache_balance
+                  type: BIGINT
+              - column:
+                  name: token
+                  type: UUID
+            tableName: wallets
+  - changeSet:
+      id: 1645351200156-4
+      author: soroosh (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: transactions
+            constraintName: FK_TRANSACTIONS_ON_USER
+            referencedColumnNames: id
+            referencedTableName: users
+  - changeSet:
+      id: 1645351200156-5
+      author: soroosh (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: wallet_id
+            baseTableName: transactions
+            constraintName: FK_TRANSACTIONS_ON_WALLET
+            referencedColumnNames: id
+            referencedTableName: wallets
+  - changeSet:
+      id: 1645351200156-6
+      author: soroosh (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: wallets
+            constraintName: FK_WALLETS_ON_USER
+            referencedColumnNames: id
+            referencedTableName: users
+

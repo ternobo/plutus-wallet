@@ -5,6 +5,7 @@ spring:
     password: ee35jeCAMqAgtdC7
   jpa:
     show-sql: true
+    generate-ddl: false
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     database: "mysql"

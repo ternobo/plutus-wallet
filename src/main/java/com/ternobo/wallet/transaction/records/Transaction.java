@@ -14,6 +14,7 @@ import java.util.Map;
 @ToString
 @Builder
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

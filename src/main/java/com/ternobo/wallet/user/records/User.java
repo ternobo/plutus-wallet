@@ -11,6 +11,7 @@ import javax.persistence.*;
 @ToString
 @Builder
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class User extends TimestampAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

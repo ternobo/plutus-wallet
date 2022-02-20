@@ -13,6 +13,7 @@ import java.util.UUID;
 @ToString
 @Builder
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
