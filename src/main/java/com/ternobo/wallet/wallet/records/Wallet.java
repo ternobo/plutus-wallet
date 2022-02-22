@@ -21,6 +21,7 @@ public class Wallet {
     private Long id;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private Currency currency;
 
     @OneToOne

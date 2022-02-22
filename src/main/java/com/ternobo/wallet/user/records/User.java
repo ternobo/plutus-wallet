@@ -1,14 +1,15 @@
 package com.ternobo.wallet.user.records;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ternobo.wallet.tools.audits.TimestampAudit;
+import com.ternobo.wallet.wallet.records.Wallet;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -41,6 +42,10 @@ public class User extends TimestampAudit implements UserDetails {
     @Column
     @Builder.Default
     private Role role = Role.USER;
+
+    @OneToMany(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "user_id")
+    private List<Wallet> wallets;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

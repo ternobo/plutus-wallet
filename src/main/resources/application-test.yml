@@ -1,3 +1,5 @@
+jwt:
+  token: "2iK9Z9QtmCt2MLLFp6xcvpUaUfw6jkDpZ9Rv8VxN"
 debug: true
 spring:
   datasource:
