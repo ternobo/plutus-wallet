@@ -26,10 +26,17 @@ public class SignupFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
-        String authorizationToken = new String(Base64.decodeBase64(
-                Optional.ofNullable(req.getHeader("Authorization"))
-                        .orElse("Bearer Tk9BUElUT0tFTi5UT0tFTg==")
-                        .replace("Bearer", "")));
+        String authorizationToken = "";
+        try {
+            byte[] authorizations = Base64.decodeBase64(
+                    Optional.ofNullable(req.getHeader("Authorization"))
+                            .orElse("Bearer Tk9BUElUT0tFTi5UT0tFTg==")
+                            .replace("Bearer", ""));
+            authorizationToken = new String(authorizations);
+        }catch (IllegalStateException e){
+            resp.sendError(401, "Invalid API Key");
+        }
+
         String[] authTokenSplit = authorizationToken.split("\\.");
         if (authTokenSplit.length == 2) {
             String clientToken = authTokenSplit[0];
@@ -37,8 +44,9 @@ public class SignupFilter implements Filter {
 
             if (this.applicationClientService.validateApplicationClient(clientToken, clientSecret)) {
                 chain.doFilter(request, response);
+                return;
             }
         }
-        resp.sendError(401,"Hi");
+        resp.sendError(401,"Invalid API Key");
     }
 }
