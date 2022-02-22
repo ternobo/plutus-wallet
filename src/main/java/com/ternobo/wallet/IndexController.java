@@ -11,4 +11,8 @@ public class IndexController {
         return "index";
     }
 
+    @GetMapping(value = "/api/v1/user/register")
+    public String hi() {
+        return "index";
+    }
 }

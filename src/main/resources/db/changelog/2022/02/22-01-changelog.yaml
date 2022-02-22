@@ -1,0 +1,57 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1645513871747-1
+      author: soroosh (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_applicationclient
+                  name: id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: created_at
+                  type: DATETIME
+              - column:
+                  name: updated_at
+                  type: DATETIME
+              - column:
+                  constraints:
+                    nullable: false
+                  name: client_secret
+                  type: VARCHAR(255)
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: client_token
+                  type: VARCHAR(255)
+            tableName: application_client
+  - changeSet:
+      id: 1645513871747-2
+      author: soroosh (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: client_secret
+            constraintName: uc_applicationclient_client_secret
+            tableName: application_client
+  - changeSet:
+      id: 1645513871747-3
+      author: soroosh (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: client_token
+            constraintName: uc_applicationclient_client_token
+            tableName: application_client
+
