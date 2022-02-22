@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd"
+        objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+    <changeSet id="1645547948939-1" author="soroosh (generated)">
+        <createTable tableName="application_client">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_applicationclient"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME"/>
+            <column name="client_secret" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="client_token" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="1645547948939-2" author="soroosh (generated)">
+        <createTable tableName="transactions">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_transactions"/>
+            </column>
+            <column name="event" type="INT"/>
+            <column name="amount" type="BIGINT"/>
+            <column name="user_id" type="BIGINT"/>
+            <column name="wallet_id" type="BIGINT"/>
+            <column name="transaction_id" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="meta" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1645547948939-3" author="soroosh (generated)">
+        <createTable tableName="users">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_users"/>
+            </column>
+            <column name="created_at" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="DATETIME"/>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="username" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="is_enabled" type="BOOLEAN"/>
+            <column name="role" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1645547948939-4" author="soroosh (generated)">
+        <createTable tableName="wallets">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_wallets"/>
+            </column>
+            <column name="currency" type="INT"/>
+            <column name="user_id" type="BIGINT"/>
+            <column name="cache_balance" type="BIGINT"/>
+            <column name="token" type="UUID"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="1645547948939-5" author="soroosh (generated)">
+        <addUniqueConstraint columnNames="client_secret" constraintName="uc_applicationclient_client_secret"
+                             tableName="application_client"/>
+    </changeSet>
+    <changeSet id="1645547948939-6" author="soroosh (generated)">
+        <addUniqueConstraint columnNames="client_token" constraintName="uc_applicationclient_client_token"
+                             tableName="application_client"/>
+    </changeSet>
+    <changeSet id="1645547948939-7" author="soroosh (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="transactions"
+                                 constraintName="FK_TRANSACTIONS_ON_USER" referencedColumnNames="id"
+                                 referencedTableName="users"/>
+    </changeSet>
+    <changeSet id="1645547948939-8" author="soroosh (generated)">
+        <addForeignKeyConstraint baseColumnNames="wallet_id" baseTableName="transactions"
+                                 constraintName="FK_TRANSACTIONS_ON_WALLET" referencedColumnNames="id"
+                                 referencedTableName="wallets"/>
+    </changeSet>
+    <changeSet id="1645547948939-9" author="soroosh (generated)">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="wallets" constraintName="FK_WALLETS_ON_USER"
+                                 referencedColumnNames="id" referencedTableName="users"/>
+    </changeSet>
+
+</databaseChangeLog>

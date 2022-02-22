@@ -1,7 +1,6 @@
 package com.ternobo.wallet.user.http.filters;
 
 import com.ternobo.wallet.client.services.ApplicationClientService;
-import com.ternobo.wallet.user.http.exceptions.InvalidClientTokenException;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Component;
 
@@ -33,9 +32,12 @@ public class SignupFilter implements Filter {
                             .orElse("Bearer Tk9BUElUT0tFTi5UT0tFTg==")
                             .replace("Bearer", ""));
             authorizationToken = new String(authorizations);
-        }catch (IllegalStateException e){
+
+            System.out.println("HI" + " " + authorizationToken);
+        } catch (IllegalStateException e) {
             resp.sendError(401, "Invalid API Key");
         }
+
 
         String[] authTokenSplit = authorizationToken.split("\\.");
         if (authTokenSplit.length == 2) {
@@ -47,6 +49,6 @@ public class SignupFilter implements Filter {
                 return;
             }
         }
-        resp.sendError(401,"Invalid API Key");
+        resp.sendError(401, "Invalid API Key");
     }
 }

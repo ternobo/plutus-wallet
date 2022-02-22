@@ -1,6 +1,5 @@
 package com.ternobo.wallet.errors;
 
-import com.ternobo.wallet.utils.CommonResponse;
 import com.ternobo.wallet.utils.StringTemplateUtils;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
@@ -15,7 +14,6 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.Objects;
 
 public class ErrorController extends BasicErrorController {
 
@@ -27,10 +25,10 @@ public class ErrorController extends BasicErrorController {
     public ResponseEntity<Map<String, Object>> error(HttpServletRequest request) {
         HttpStatus status = this.getStatus(request);
         if (status == HttpStatus.NO_CONTENT) {
-            return new ResponseEntity(status);
+            return new ResponseEntity<>(status);
         } else {
             Map<String, Object> body = this.getErrorAttributes(request, this.getErrorAttributeOptions(request, MediaType.ALL));
-            return new ResponseEntity(body, status);
+            return new ResponseEntity<>(body, status);
         }
     }
 
@@ -47,7 +45,7 @@ public class ErrorController extends BasicErrorController {
                 return new ModelAndView("errors/error-" + statusCode + ".html");
             }
         }
-        return  new ModelAndView("errors/error");
+        return new ModelAndView("errors/error");
     }
 
 
