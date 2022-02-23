@@ -15,7 +15,6 @@ import java.util.List;
 @Table(name = "users")
 @Getter
 @Setter
-@ToString
 @Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
@@ -43,7 +42,7 @@ public class User extends TimestampAudit implements UserDetails {
     @Builder.Default
     private Role role = Role.USER;
 
-    @OneToMany(cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private List<Wallet> wallets;
 

@@ -4,11 +4,16 @@ import com.ternobo.wallet.user.http.exceptions.UsernameDuplicatedException;
 import com.ternobo.wallet.user.http.requests.UserDTO;
 import com.ternobo.wallet.user.records.User;
 import com.ternobo.wallet.user.repositories.UserRepository;
+import com.ternobo.wallet.wallet.records.Currency;
+import com.ternobo.wallet.wallet.records.Wallet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class JPAUserService implements UserService {
@@ -35,6 +40,13 @@ public class JPAUserService implements UserService {
                         .name(user.name())
                         .password(this.passwordEncoder.encode(user.password()))
                         .username(user.username().toLowerCase())
+                        .wallets(List.of(
+                                Wallet.builder()
+                                        .cacheBalance(0L)
+                                        .currency(Currency.PLUTUS)
+                                        .token(UUID.randomUUID())
+                                        .build()
+                        ))
                         .build()
         );
     }

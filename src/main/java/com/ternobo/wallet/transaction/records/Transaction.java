@@ -1,9 +1,9 @@
 package com.ternobo.wallet.transaction.records;
 
 import com.ternobo.wallet.tools.HashMapConverter;
-import com.ternobo.wallet.user.records.User;
 import com.ternobo.wallet.wallet.records.Wallet;
 import lombok.*;
+
 import javax.persistence.*;
 import java.util.Map;
 
@@ -21,15 +21,11 @@ public class Transaction {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private TransactionEvent event;
 
     @Column
-    private Long amount;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private double amount;
 
     @ManyToOne
     @JoinColumn(name = "wallet_id")
