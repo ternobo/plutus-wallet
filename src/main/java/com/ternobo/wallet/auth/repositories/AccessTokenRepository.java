@@ -12,4 +12,5 @@ public interface AccessTokenRepository extends JpaRepository<AccessToken, Long> 
     Optional<AccessToken> findByRefreshToken(String refreshToken);
     boolean existsByRefreshToken(String refreshToken);
 
+
 }

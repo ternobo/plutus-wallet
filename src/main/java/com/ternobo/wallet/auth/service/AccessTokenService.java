@@ -9,10 +9,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
 @Service
 public class AccessTokenService {
 
+    public final static int tokenExpirationDays = 10;
+
     private final AccessTokenRepository repository;
+
 
     @Autowired
     public AccessTokenService(AccessTokenRepository repository) {
@@ -23,8 +29,20 @@ public class AccessTokenService {
         return this.repository.findByRefreshToken(refreshToken).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    public Optional<AccessToken> findById(Long id) {
+        return this.repository.findById(id);
+    }
+
     public AccessToken createAccessToken(User user) {
-        return this.repository.save(new AccessToken(this.generateRefreshToeken(), user));
+        return this.repository.save(new AccessToken(this.generateRefreshToeken(), user, LocalDate.now().plusDays(AccessTokenService.tokenExpirationDays)));
+    }
+
+    public void deleteAccessToken(Long id) {
+        this.repository.deleteById(id);
+    }
+
+    public void deleteAccessToken(AccessToken accessToken) {
+        this.repository.deleteById(accessToken.getId());
     }
 
     public String generateRefreshToeken() {

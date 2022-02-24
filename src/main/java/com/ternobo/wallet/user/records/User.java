@@ -9,7 +9,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "users")
@@ -69,5 +71,15 @@ public class User extends TimestampAudit implements UserDetails {
     @Override
     public boolean isEnabled() {
         return this.isEnabled;
+    }
+
+    public Map<String, Object> toHashMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.putIfAbsent("id", this.getId());
+        map.putIfAbsent("name", this.getName());
+        map.putIfAbsent("username", this.getUsername());
+        map.putIfAbsent("authorities", this.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
+        map.putIfAbsent("role", this.getRole().name());
+        return map;
     }
 }

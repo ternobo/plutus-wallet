@@ -9,7 +9,9 @@ import com.ternobo.wallet.auth.records.AccessToken;
 import com.ternobo.wallet.user.records.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -20,7 +22,7 @@ public class JTWService {
     @Value("${jwt.secret}")
     private String secret;
 
-    private AccessTokenService accessTokenService;
+    private final AccessTokenService accessTokenService;
 
     @Autowired
     public JTWService(AccessTokenService accessTokenService) {
@@ -32,7 +34,19 @@ public class JTWService {
         JWTVerifier verifier = JWT.require(algorithmHS)
                 .withIssuer("ternobo")
                 .build();
-        return verifier.verify(token);
+        DecodedJWT decodedJWT = verifier.verify(token);
+        this.accessTokenService.findById(Long.parseUnsignedLong(decodedJWT.getId())).orElseThrow(() -> new JWTVerificationException("Token ID is invalid"));
+        return decodedJWT;
+    }
+
+    public void invokeToken(String token){
+        Algorithm algorithmHS = Algorithm.HMAC512(this.secret);
+        JWTVerifier verifier = JWT.require(algorithmHS)
+                .withIssuer("ternobo")
+                .build();
+        DecodedJWT decodedJWT = verifier.verify(token);
+        AccessToken accessToken = this.accessTokenService.findById(Long.parseUnsignedLong(decodedJWT.getId())).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+        this.accessTokenService.deleteAccessToken(accessToken);
     }
 
     public String generateToken(User userDetails) {
@@ -42,10 +56,11 @@ public class JTWService {
                 .withIssuer("ternobo")
                 .withSubject(String.valueOf(userDetails.getId()))
                 .withIssuedAt(new Date())
-                .withExpiresAt(java.sql.Date.valueOf(LocalDate.now().plusDays(10)))
+                .withExpiresAt(java.sql.Date.valueOf(LocalDate.now().plusDays(AccessTokenService.tokenExpirationDays)))
                 .withClaim("refreshToken", refreshToken.getRefreshToken())
                 .withClaim("preferred_username", userDetails.getUsername())
                 .withClaim("name", userDetails.getName())
+                .withClaim("user", userDetails.toHashMap())
                 .withJWTId(String.valueOf(refreshToken.getId()))
                 .sign(algorithmHS);
     }

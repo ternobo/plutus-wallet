@@ -8,6 +8,8 @@ import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -29,9 +31,13 @@ public class AccessToken {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public AccessToken(String refreshToken, User user) {
+    @Column(name = "expiration_date")
+    private Date expirationDate;
+
+    public AccessToken(String refreshToken, User user, LocalDate jwtExpireDate) {
         this.refreshToken = refreshToken;
         this.user = user;
+        this.expirationDate = java.sql.Date.valueOf(jwtExpireDate.plusDays(2));
     }
 
     @Override
