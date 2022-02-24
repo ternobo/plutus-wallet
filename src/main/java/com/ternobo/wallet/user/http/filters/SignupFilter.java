@@ -32,8 +32,6 @@ public class SignupFilter implements Filter {
                             .orElse("Bearer Tk9BUElUT0tFTi5UT0tFTg==")
                             .replace("Bearer", ""));
             authorizationToken = new String(authorizations);
-
-            System.out.println("HI" + " " + authorizationToken);
         } catch (IllegalStateException e) {
             resp.sendError(401, "Invalid API Key");
         }

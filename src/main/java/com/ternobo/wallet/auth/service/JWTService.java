@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import java.util.Date;
 
 @Service
-public class JTWService {
+public class JWTService {
 
     @Value("${jwt.secret}")
     private String secret;
@@ -25,7 +25,7 @@ public class JTWService {
     private final AccessTokenService accessTokenService;
 
     @Autowired
-    public JTWService(AccessTokenService accessTokenService) {
+    public JWTService(AccessTokenService accessTokenService) {
         this.accessTokenService = accessTokenService;
     }
 
@@ -47,6 +47,23 @@ public class JTWService {
         DecodedJWT decodedJWT = verifier.verify(token);
         AccessToken accessToken = this.accessTokenService.findById(Long.parseUnsignedLong(decodedJWT.getId())).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED));
         this.accessTokenService.deleteAccessToken(accessToken);
+    }
+
+    public String generateToken(String username) {
+        Algorithm algorithmHS = Algorithm.HMAC512(this.secret);
+        AccessToken refreshToken = this.accessTokenService.createAccessToken(username);
+        User userDetails = refreshToken.getUser();
+        return JWT.create()
+                .withIssuer("ternobo")
+                .withSubject(String.valueOf(userDetails.getId()))
+                .withIssuedAt(new Date())
+                .withExpiresAt(java.sql.Date.valueOf(LocalDate.now().plusDays(AccessTokenService.tokenExpirationDays)))
+                .withClaim("refreshToken", refreshToken.getRefreshToken())
+                .withClaim("preferred_username", userDetails.getUsername())
+                .withClaim("name", userDetails.getName())
+                .withClaim("user", userDetails.toHashMap())
+                .withJWTId(String.valueOf(refreshToken.getId()))
+                .sign(algorithmHS);
     }
 
     public String generateToken(User userDetails) {

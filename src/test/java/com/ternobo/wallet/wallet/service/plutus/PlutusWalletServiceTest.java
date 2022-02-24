@@ -1,6 +1,7 @@
 package com.ternobo.wallet.wallet.service.plutus;
 
 import com.github.javafaker.Faker;
+import com.ternobo.wallet.transaction.records.Transaction;
 import com.ternobo.wallet.transaction.records.TransactionEvent;
 import com.ternobo.wallet.user.http.requests.UserDTO;
 import com.ternobo.wallet.user.records.User;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.springframework.test.util.AssertionErrors.assertEquals;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -84,8 +86,8 @@ class PlutusWalletServiceTest {
 
     @Test
     void transfer() {
-        this.walletService.transfer(100, this.firstWallet.getId(), this.secondWallet.getId());
-
+        Transaction transfer = this.walletService.transfer(100, this.firstWallet.getToken(), this.secondWallet.getToken());
+        assertTrue("Transfer Transaction is null, Invalid transfer",transfer != null);
         this.firstWallet = this.walletService.findWalletById(this.firstWallet.getId());
         this.secondWallet = this.walletService.findWalletById(this.secondWallet.getId());
 

@@ -31,9 +31,9 @@ public class UserCRUDTests {
                 "142536"
         );
         User user = this.service.createUser(userDTO);
-        assertEquals(user.getName(), userDTO.name());
+        assertEquals(user.getName(), userDTO.getName());
         assertEquals(user.getRole(), Role.USER);
-        assertEquals(user.getUsername(), userDTO.username());
+        assertEquals(user.getUsername(), userDTO.getUsername());
     }
 
     @Test
@@ -45,7 +45,7 @@ public class UserCRUDTests {
                 "142536"
         );
         this.service.createUser(userDTO);
-        assertInstanceOf(UserDetails.class, this.service.loadUserByUsername(userDTO.username()));
+        assertInstanceOf(UserDetails.class, this.service.loadUserByUsername(userDTO.getUsername()));
     }
 
     @Test

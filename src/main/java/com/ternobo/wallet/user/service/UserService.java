@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 public interface UserService extends UserDetailsService {
     User createUser(UserDTO user) throws UsernameDuplicatedException;
 
+    User findByUsername(String username);
+
     @Override
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 }

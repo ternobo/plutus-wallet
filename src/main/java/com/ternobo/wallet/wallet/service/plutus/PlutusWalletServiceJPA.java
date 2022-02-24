@@ -5,6 +5,7 @@ import com.ternobo.wallet.transaction.records.TransactionEvent;
 import com.ternobo.wallet.wallet.exceptions.WalletNotFoundException;
 import com.ternobo.wallet.wallet.records.Wallet;
 import com.ternobo.wallet.wallet.repositories.WalletRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,11 @@ public class PlutusWalletServiceJPA implements PlutusWalletService {
     }
 
     @Override
+    public List<Wallet> getUserWallets(String username) {
+        return repository.findByUserUsername(username);
+    }
+
+    @Override
     @Transactional
     public double recalculateBalance(Long walletId) {
         Wallet wallet = this.repository.findById(walletId).orElseThrow(WalletNotFoundException::new);
@@ -44,6 +50,7 @@ public class PlutusWalletServiceJPA implements PlutusWalletService {
         Transaction transaction = Transaction.builder()
                 .amount(amount)
                 .event(event)
+                .transactionId(UUID.randomUUID().toString())
                 .wallet(wallet)
                 .build();
         wallet.addTransaction(
@@ -82,30 +89,31 @@ public class PlutusWalletServiceJPA implements PlutusWalletService {
 
     @Transactional
     @Override
-    public boolean transfer(double amount, Long sourceWalletId, Long targetWalletId) {
+    public Transaction transfer(double amount, UUID sourceWalletToken, UUID targetWalletToken) {
         try {
-            Wallet sourceWallet = this.repository.findById(sourceWalletId).orElseThrow(WalletNotFoundException::new);
-            Wallet targetWallet = this.repository.findById(targetWalletId).orElseThrow(WalletNotFoundException::new);
+            Wallet sourceWallet = this.repository.findByToken(sourceWalletToken).orElseThrow(WalletNotFoundException::new);
+            Wallet targetWallet = this.repository.findByToken(targetWalletToken).orElseThrow(WalletNotFoundException::new);
 
             String transferTransactionId = UUID.randomUUID().toString();
 
+            Transaction transferTransaction = Transaction.builder()
+                    .event(TransactionEvent.SEND)
+                    .amount(-amount)
+                    .transactionId(transferTransactionId)
+                    .wallet(sourceWallet)
+                    .build();
+
             // Withdrawal transaction
             sourceWallet.addTransaction(
-                    Transaction.builder()
-                            .event(TransactionEvent.SEND)
-                            .amount(-amount)
-                            .transactionId(transferTransactionId)
-                            .wallet(sourceWallet)
-                            .build()
+                    transferTransaction
             );
-            System.out.println(sourceWallet.getCacheBalance() - amount);
             sourceWallet.setCacheBalance(sourceWallet.getCacheBalance() - amount);
             // Withdrawal transaction end
 
             // Deposit transaction
             targetWallet.addTransaction(
                     Transaction.builder()
-                            .event(TransactionEvent.SEND)
+                            .event(TransactionEvent.RECEIVE)
                             .amount(amount)
                             .transactionId(transferTransactionId)
                             .wallet(targetWallet)
@@ -115,9 +123,10 @@ public class PlutusWalletServiceJPA implements PlutusWalletService {
             // Deposit transaction end
 
             this.repository.saveAll(List.of(sourceWallet, targetWallet));
-            return true;
+            return transferTransaction;
         } catch (RuntimeException exception) {
-            return false;
+            System.out.println(exception.getMessage());
+            return null;
         }
     }
 }

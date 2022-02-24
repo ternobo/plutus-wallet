@@ -18,12 +18,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class JTWServiceTest {
+class JWTServiceTest {
     @Autowired
     private UserService userService;
 
     @Autowired
-    private JTWService jwtService;
+    private JWTService jwtService;
 
     private DecodedJWT decodedJWT;
     private User user;

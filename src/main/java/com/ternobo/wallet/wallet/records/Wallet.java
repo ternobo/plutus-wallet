@@ -38,7 +38,7 @@ public class Wallet {
     @Column(name = "cache_balance")
     private double cacheBalance;
 
-    @Column
+    @Column(name = "token", updatable = false, nullable = false, unique=true, columnDefinition = "BINARY(16)")
     private UUID token;
 
     @OneToMany(cascade = CascadeType.ALL)

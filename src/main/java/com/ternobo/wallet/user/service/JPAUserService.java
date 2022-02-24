@@ -31,15 +31,15 @@ public class JPAUserService implements UserService {
     @Override
     public User createUser(UserDTO user) throws UsernameDuplicatedException {
         // Throws error if username is duplicated
-        if (this.repository.existsByUsername(user.username())) {
+        if (this.repository.existsByUsername(user.getUsername())) {
             throw new UsernameDuplicatedException();
         }
 
         return this.repository.save(
                 User.builder()
-                        .name(user.name())
-                        .password(this.passwordEncoder.encode(user.password()))
-                        .username(user.username().toLowerCase())
+                        .name(user.getName())
+                        .password(this.passwordEncoder.encode(user.getPassword()))
+                        .username(user.getUsername().toLowerCase())
                         .wallets(List.of(
                                 Wallet.builder()
                                         .cacheBalance(0L)
@@ -49,6 +49,10 @@ public class JPAUserService implements UserService {
                         ))
                         .build()
         );
+    }
+
+    public User findByUsername(String username) throws UsernameNotFoundException {
+        return this.repository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("user with %s username not found".formatted(username)));
     }
 
     @Override
