@@ -3,6 +3,7 @@ package com.ternobo.wallet.auth.http.filter;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ternobo.wallet.auth.service.JWTService;
+import com.ternobo.wallet.user.records.User;
 import com.ternobo.wallet.user.service.UserService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,7 +38,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         try {
             DecodedJWT decodedJWT = this.service.validateJWT(bearerToken);
             String username = decodedJWT.getClaim("preferred_username").asString();
-            UserDetails userDetails = this.userService.loadUserByUsername(username);
+            User userDetails = this.userService.findByUsername(username);
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             authenticationToken.setDetails(userDetails);
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);

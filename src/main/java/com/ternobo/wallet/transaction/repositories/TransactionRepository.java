@@ -5,6 +5,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.Optional;
+
 public interface TransactionRepository extends PagingAndSortingRepository<Transaction, Long> {
-    Page<Transaction> findByWalletIdAndWalletUserId(Long id, Long id1, Pageable pageable);
+    Page<Transaction> findByWalletIdAndWalletUserUsername(Long walletId, String username, Pageable pageable);
+
+    Page<Transaction> findByWalletUserUsername(String username, Pageable pageable);
+
+    long deleteByTransactionId(String transactionId);
+
+    Optional<Transaction> findByTransactionId(String transactionId);
+
+
 }

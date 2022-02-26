@@ -1,6 +1,7 @@
 package com.ternobo.wallet.transaction.records;
 
 import com.ternobo.wallet.tools.HashMapConverter;
+import com.ternobo.wallet.tools.audits.TimestampAudit;
 import com.ternobo.wallet.wallet.records.Wallet;
 import lombok.*;
 
@@ -15,7 +16,7 @@ import java.util.Map;
 @Builder
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class Transaction {
+public class Transaction extends TimestampAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

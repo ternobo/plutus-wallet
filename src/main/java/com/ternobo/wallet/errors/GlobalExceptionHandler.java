@@ -37,6 +37,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler({IllegalArgumentException.class})
+    protected ResponseEntity<Object> handleMethodParametersNotValid(
+            Exception e, WebRequest request) {
+        HttpServletRequest servletRequest = ((ServletWebRequest) request).getRequest();
+        Map<String, Object> body = new HashMap<>();
+        body.put("path", servletRequest.getServletPath());
+        body.put("errors", List.of(e.getMessage()));
+        body.put("status", 400);
+        body.put("timestamp", new Date());
+
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler({ResponseStatusException.class})
     protected ResponseEntity<Object> handleMethodResponseStatusException(
             Exception e, WebRequest request) {
