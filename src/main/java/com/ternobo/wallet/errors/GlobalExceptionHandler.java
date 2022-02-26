@@ -8,21 +8,18 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({MethodArgumentNotValidException.class, Exception.class})
+    @ExceptionHandler({MethodArgumentNotValidException.class})
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            Exception e, WebRequest request) throws Exception {
-//        throw e;
+            Exception e, WebRequest request) {
         HttpServletRequest servletRequest = ((ServletWebRequest) request).getRequest();
         MethodArgumentNotValidException ex = (MethodArgumentNotValidException) e;
         Map<String, Object> body = new HashMap<>();
@@ -38,5 +35,20 @@ public class GlobalExceptionHandler {
         body.put("timestamp", new Date());
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({ResponseStatusException.class})
+    protected ResponseEntity<Object> handleMethodResponseStatusException(
+            Exception e, WebRequest request) {
+        HttpServletRequest servletRequest = ((ServletWebRequest) request).getRequest();
+        ResponseStatusException ex = (ResponseStatusException) e;
+        Map<String, Object> body = new HashMap<>();
+
+        body.put("path", servletRequest.getServletPath());
+        body.put("errors", List.of(Objects.requireNonNull(ex.getReason())));
+        body.put("status", ex.getRawStatusCode());
+        body.put("timestamp", new Date());
+
+        return new ResponseEntity<>(body, HttpStatus.valueOf(ex.getRawStatusCode()));
     }
 }

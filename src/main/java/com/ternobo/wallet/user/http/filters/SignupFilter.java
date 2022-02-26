@@ -30,7 +30,7 @@ public class SignupFilter implements Filter {
             byte[] authorizations = Base64.decodeBase64(
                     Optional.ofNullable(req.getHeader("Authorization"))
                             .orElse("Bearer Tk9BUElUT0tFTi5UT0tFTg==")
-                            .replace("Bearer", ""));
+                            .replace("Bearer ", ""));
             authorizationToken = new String(authorizations);
         } catch (IllegalStateException e) {
             resp.sendError(401, "Invalid API Key");

@@ -4,7 +4,6 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ternobo.wallet.auth.service.JWTService;
 import com.ternobo.wallet.user.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +23,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private final JWTService service;
     private final UserService userService;
 
-    @Autowired
     public JwtRequestFilter(JWTService service, UserService userService) {
         this.service = service;
         this.userService = userService;
@@ -43,9 +41,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             authenticationToken.setDetails(userDetails);
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            chain.doFilter(request, response);
         } catch (JWTVerificationException ex) {
-           response.sendError(401);
+            logger.warn("JWT Token does not begin with Bearer String");
         }
+        chain.doFilter(request, response);
     }
 }
