@@ -40,6 +40,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/v1/***").authenticated()
                 .antMatchers("/api/v1/auth/login").permitAll()
                 .antMatchers("/api/v1/user/register").permitAll()
+                .antMatchers("/","/assets/***").permitAll()
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)

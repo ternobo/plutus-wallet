@@ -6,6 +6,7 @@ import com.ternobo.wallet.wallet.records.Wallet;
 import lombok.*;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 @Entity
@@ -41,4 +42,9 @@ public class Transaction extends TimestampAudit {
 
     @Convert(converter = HashMapConverter.class)
     private Map<String, Object> meta;
+
+    public String getTransactionDateTime(){
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(this.createdAt);
+    }
+
 }

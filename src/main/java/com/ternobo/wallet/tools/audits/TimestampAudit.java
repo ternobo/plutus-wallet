@@ -16,9 +16,9 @@ import java.util.Date;
 public abstract class TimestampAudit implements Serializable {
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
-    private Date createdAt;
+    protected Date createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    protected LocalDateTime updatedAt;
 }
