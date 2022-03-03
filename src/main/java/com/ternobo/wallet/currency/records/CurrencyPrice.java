@@ -1,5 +1,6 @@
 package com.ternobo.wallet.currency.records;
 
+import com.ternobo.wallet.wallet.records.Currency;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -18,17 +19,17 @@ public class CurrencyPrice {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String currency;
+    private Currency currency;
 
     @Column(nullable = false)
-    private int price;
+    private double price;
 
-    public CurrencyPrice(String currency, int price) {
+    public CurrencyPrice(Currency currency, int price) {
         this.currency = currency;
         this.price = price;
     }
 
-    public CurrencyPrice(String currency) {
+    public CurrencyPrice(Currency currency) {
         this.currency = currency;
     }
 

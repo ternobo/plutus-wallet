@@ -16,7 +16,7 @@ class CurrencyPriceServiceTest {
 
     @Test
     void getUSDRealTime() {
-        int usdRealTime = this.service.getUSDRealTime();
+        double usdRealTime = this.service.getUSDRealTime();
         assertNotEquals(0, usdRealTime);
     }
 }

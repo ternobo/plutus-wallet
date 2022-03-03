@@ -2,6 +2,7 @@ package com.ternobo.wallet.payment.records;
 
 import com.ternobo.wallet.tools.HashMapConverter;
 import com.ternobo.wallet.tools.audits.TimestampAudit;
+import com.ternobo.wallet.wallet.records.Currency;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -51,6 +52,10 @@ public class Payment extends TimestampAudit {
     @Column(name = "verify_date")
     private Date verifyDate;
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
+    
     @Column
     @Convert(converter = HashMapConverter.class)
     private Map<String, Object> meta;

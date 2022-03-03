@@ -1,4 +1,4 @@
-package com.ternobo.wallet.wallet.http;
+package com.ternobo.wallet.wallet.http.controllers;
 
 import com.ternobo.wallet.transaction.records.Transaction;
 import com.ternobo.wallet.utils.http.RestfulResponse;

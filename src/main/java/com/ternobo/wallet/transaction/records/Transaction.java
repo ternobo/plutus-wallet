@@ -1,13 +1,17 @@
 package com.ternobo.wallet.transaction.records;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ternobo.wallet.tools.HashMapConverter;
 import com.ternobo.wallet.tools.audits.TimestampAudit;
 import com.ternobo.wallet.wallet.records.Wallet;
 import lombok.*;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Map;
+import java.util.Objects;
 
 @Entity
 @Table(name = "transactions")
@@ -43,8 +47,9 @@ public class Transaction extends TimestampAudit {
     @Convert(converter = HashMapConverter.class)
     private Map<String, Object> meta;
 
+    @JsonProperty("transaction_time")
     public String getTransactionDateTime(){
-        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(this.createdAt);
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(Objects.requireNonNullElseGet(this.createdAt, () -> Date.valueOf(LocalDate.now())));
     }
 
 }

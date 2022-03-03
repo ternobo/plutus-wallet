@@ -1,15 +1,16 @@
 package com.ternobo.wallet.wallet.service.plutus;
 
+import com.ternobo.wallet.currency.CurrencyPriceService;
 import com.ternobo.wallet.transaction.records.Transaction;
 import com.ternobo.wallet.transaction.records.TransactionEvent;
 import com.ternobo.wallet.wallet.exceptions.TransactionException;
 import com.ternobo.wallet.wallet.exceptions.WalletNotFoundException;
+import com.ternobo.wallet.wallet.records.Currency;
 import com.ternobo.wallet.wallet.records.Wallet;
 import com.ternobo.wallet.wallet.repositories.WalletRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -18,9 +19,11 @@ import java.util.UUID;
 public class PlutusWalletServiceJPA implements PlutusWalletService {
 
     private final WalletRepository repository;
+    private final CurrencyPriceService currencyService;
 
-    public PlutusWalletServiceJPA(WalletRepository repository) {
+    public PlutusWalletServiceJPA(WalletRepository repository, CurrencyPriceService currencyService) {
         this.repository = repository;
+        this.currencyService = currencyService;
     }
 
     @Override
@@ -31,6 +34,12 @@ public class PlutusWalletServiceJPA implements PlutusWalletService {
     @Override
     public List<Wallet> getUserWallets(String username) {
         return repository.findByUserUsername(username);
+    }
+
+    @Override
+    public int exchangeToPlutus(Currency currency, int amount) {
+        double plutus = this.currencyService.exchangeIRRToPlutus(amount);
+        return (int) plutus;
     }
 
     @Override

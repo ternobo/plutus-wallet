@@ -11,15 +11,19 @@ import com.ternobo.wallet.payment.repositories.PaymentRepository;
 import com.ternobo.wallet.payment.zarinpal.exceptions.CreatePaymentUrlException;
 import com.ternobo.wallet.payment.zarinpal.exceptions.InvalidTransactionIDException;
 import com.ternobo.wallet.payment.zarinpal.requests.CreatePaymentRequest;
+import com.ternobo.wallet.payment.zarinpal.requests.VerifyPaymentRequest;
 import com.ternobo.wallet.payment.zarinpal.response.CreatePaymentResponse;
 import com.ternobo.wallet.payment.zarinpal.response.PaymentCommonResponse;
+import com.ternobo.wallet.wallet.records.Currency;
 import com.ternobo.wallet.wallet.records.Wallet;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -82,6 +86,7 @@ public class ZarinpalPaymentService implements IRRPaymentService {
                         .transactionId(result.getData().getAuthority())
                         .action(action)
                         .meta(Map.of("wallet_id", wallet.getId()))
+                        .currency(Currency.IRR)
                         .build();
                 this.paymentRepository.save(payment);
                 return this.config.getStartPaymentUrl() + result.getData().getAuthority();
@@ -93,12 +98,38 @@ public class ZarinpalPaymentService implements IRRPaymentService {
     }
 
     @Override
-    public void verifyPayment(String authority, Function<Payment, Boolean> action) {
+    public void verifyPayment(String authority, Function<Payment, Boolean> action) throws JsonProcessingException, InvalidTransactionIDException {
         Payment transaction = this.paymentRepository.findByTransactionId(authority).orElseThrow(() -> new InvalidTransactionIDException("Invalid Transaction"));
-        if(action.apply(transaction)) {
-            transaction.setVerifyDate(Date.valueOf(LocalDate.now()));
-            transaction.setVerificationStatus(true);
-        }else{
+        String jsonBody = this.mapper.writeValueAsString(
+                VerifyPaymentRequest.builder()
+                        .merchantId(this.config.getMerchantID())
+                        .amount((int) transaction.getAmount())
+                        .authority(authority)
+                        .build()
+        );
+        RequestBody body = RequestBody.create(jsonBody, MediaType.get("application/json"));
+        Request request = new Request.Builder()
+                .url(this.config.getVerifyPaymentUrl())
+                .post(body)
+                .build();
+        if (action.apply(transaction)) {
+            // Send Request to Zarinpal
+            try (Response response = client.newCall(request).execute()) {
+                if (response.code() == 200) {
+                    PaymentCommonResponse<LinkedHashMap<String, Object>> result = this.mapper.readValue(Objects.requireNonNull(response.body()).string(), PaymentCommonResponse.class);
+                    if (result.getData().getOrDefault("code", 101).equals(100)) {
+                        transaction.setVerifyDate(Date.valueOf(LocalDate.now()));
+                        transaction.setVerificationStatus(true);
+                    } else {
+                        throw new InvalidTransactionIDException("Invalid Transaction");
+                    }
+                } else {
+                    throw new InvalidTransactionIDException("Invalid Transaction");
+                }
+            } catch (IOException | IllegalStateException e) {
+                throw new CreatePaymentUrlException(e.getMessage());
+            }
+        } else {
             transaction.setVerifyDate(Date.valueOf(LocalDate.now()));
             transaction.setVerificationStatus(false);
         }
