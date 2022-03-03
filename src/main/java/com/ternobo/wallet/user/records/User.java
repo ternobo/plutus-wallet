@@ -30,6 +30,12 @@ public class User extends TimestampAudit implements UserDetails {
     private String name;
 
     @Column
+    private String email;
+
+    @Column
+    private String mobile;
+
+    @Column
     private String username;
 
     @Column

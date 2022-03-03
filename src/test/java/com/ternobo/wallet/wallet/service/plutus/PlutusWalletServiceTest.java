@@ -35,7 +35,6 @@ class PlutusWalletServiceTest {
     private Wallet secondWallet;
 
     @BeforeAll
-
     static void beforeAll() {
         faker = new Faker();
     }

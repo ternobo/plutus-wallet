@@ -16,3 +16,14 @@ server:
   error:
     whitelabel:
       enabled: false
+zarinpal:
+  mode: "normal"
+  sandbox-request-payment-url: "https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentRequest.json"
+  sandbox-verify-payment-url: "https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentVerification.json"
+  sandbox-start-payment-url: "https://sandbox.zarinpal.com/pg/StartPay/"
+
+  request-payment-url: "https://api.zarinpal.com/pg/v4/payment/request.json"
+  verify-payment-url: "https://api.zarinpal.com/pg/v4/payment/verify.json"
+  start-payment-url: "https://zarinpal.com/pg/StartPay/"
+
+  merchant_id: "5522d245-848d-4c85-8d36-e0ee00b8a149"
